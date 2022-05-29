@@ -13,7 +13,7 @@ st.set_page_config(
     page_icon=":robot:"
 )
 
-st.header("HOT6IX - Happy Chatbot")
+st.header("roberta 분류 모델을 이용한 챗봇")
 
 import tokenizers
 @st.cache(hash_funcs={tokenizers.Tokenizer: lambda _: None, tokenizers.AddedToken: lambda _: None})

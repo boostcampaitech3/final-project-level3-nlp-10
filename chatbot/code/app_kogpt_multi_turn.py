@@ -4,9 +4,9 @@ from transformers import GPT2Config, GPT2LMHeadModel
 import streamlit as st
 from streamlit_chat import message
 import tokenizers
-#import gdown
+import gdown
 
-st.header("fine-tuned kogpt2를 이용한 챗봇")
+st.header("kogpt2를 이용한 싱글턴 챗봇")
 
 @st.cache(hash_funcs={tokenizers.Tokenizer: lambda _: None, tokenizers.AddedToken: lambda _: None})
 def load():
