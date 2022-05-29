@@ -8,11 +8,6 @@ import streamlit as st
 from streamlit_chat import message
 import gdown
 
-st.set_page_config(
-    page_title="HOT6IX - Happy Chatbot",
-    page_icon=":robot:"
-)
-
 st.header("roberta 분류 모델을 이용한 챗봇")
 
 import tokenizers
