@@ -6,6 +6,7 @@ import torch.nn.functional as F
 import json
 import streamlit as st
 from streamlit_chat import message
+import gdown
 
 st.set_page_config(
     page_title="HOT6IX - Happy Chatbot",
@@ -23,8 +24,11 @@ def model_load():
   model = AutoModelForSequenceClassification.from_pretrained(MODEL_NAME, config=config)
 
   tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
-  state_dict = torch.load(os.path.join(f'./best_model', 'pytorch_model.bin'))
-  model.load_state_dict(state_dict)  
+  google_path = 'https://drive.google.com/uc?id='
+  file_id = '1AnlHOr8waFOnzgYWVLtFCKpLi4yHQ3GR'
+  output_name = 'roberta_model.bin'
+  gdown.download(google_path + file_id, output_name, quiet=False)
+  model.load_state_dict(torch.load(output_name))  
   return tokenizer, model
 
 @st.cache(hash_funcs={tokenizers.Tokenizer: lambda _: None, tokenizers.AddedToken: lambda _: None})
@@ -78,7 +82,7 @@ if user_input:
   answer = label2answer[label][0]
   
   st.session_state.past.append(user_input)
-  st.session_state.generated.append("[" + label + "]" + " " + answer)
+  st.session_state.generated.append(answer)
 
 if st.session_state['generated']:
   for i in range(len(st.session_state['generated'])-1, -1, -1):

@@ -1,1 +1,0 @@
-학습 결과인 최종 모델 pytorch_model.bin이 저장되는 장소

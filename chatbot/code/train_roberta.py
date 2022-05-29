@@ -68,7 +68,7 @@ def train():
   model.to(device)
 
   training_args = TrainingArguments(
-    output_dir='./results',          # output directory
+    output_dir='./results_roberta',          # output directory
     num_train_epochs=20,              # total number of training epochs
     learning_rate=3e-6,               # learning_rate
     per_device_train_batch_size=8,  # batch size per device during training
@@ -83,7 +83,7 @@ def train():
 
   trainer.train()
   
-  torch.save(model.state_dict(), os.path.join(f'./best_model', 'pytorch_model.bin'))
+  torch.save(model.state_dict(), os.path.join(f'./best_model_roberta', 'roberta_model.bin'))
 
 def main():
   train()
