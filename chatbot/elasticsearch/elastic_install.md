@@ -20,22 +20,22 @@ bin/elasticsearch-plugin install org.carrot2:elasticsearch-carrot2:7.14.1
 
 4) 유저 생성
 aistage 서버의 root는 권한이 부족하여 elasticsearch 실행을 할 수 없습니다. 따라서 새로 유저를 생성하여 실행해야 합니다. aistage 게시물을 참고하면 됩니다.
-# 지금 사용하고 있는 root 계정의 비밀번호 설정
+지금 사용하고 있는 root 계정의 비밀번호 설정
 $ passwd root
-# '''
-# 설정한 root 계정의 비밀번호 입력
-# '''
-# 계정 추가하기
+
+설정한 root 계정의 비밀번호 입력
+
+계정 추가하기
 $ useradd [만드려는_계정_이름]
-# $ useradd dooho
-# 해당 계정으로 Elasticsearch 실행 권한 주기
-# 마지막에는 Elasticsearch 경로를 작성하면 됩니다.
+$ useradd dooho
+해당 계정으로 Elasticsearch 실행 권한 주기
+마지막에는 Elasticsearch 경로를 작성하면 됩니다.
 $ chown -R [만든_계정_이름]:[만든_계정_이름] [Elasticsearch_경로]
-# 저의 경우 다음과 같았습니다.
-# $ chown -R kiwon:kiwon /opt/ml/elasticsearch-7.14.1
-# 이제 해당 계정으로 로그인합니다.
+저의 경우 다음과 같았습니다.
+$ chown -R kiwon:kiwon /opt/ml/elasticsearch-7.14.1
+이제 해당 계정으로 로그인합니다.
 $ su 만든_계정_이름
-# $ su kiwon
+$ su kiwon
 
 5) 엘라스틱 서치 실행
 su 계정이름으로 유저를 변경한 이후
