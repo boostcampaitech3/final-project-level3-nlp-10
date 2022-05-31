@@ -18,7 +18,7 @@ def load():
     config = GPT2Config(vocab_size=50000)
     model = GPT2LMHeadModel(config)
     google_path = 'https://drive.google.com/uc?id='
-    file_id = '1JMEkvc16auqJtJRoF0JVtIfxY8XynABb'
+    file_id = '1f9_ez8l3Yvmb8faVpa9iHXyMvhhBihGw'
     output_name = 'single_turn_model.bin'
     gdown.download(google_path + file_id, output_name, quiet=False)
     model.load_state_dict(torch.load(output_name, map_location=torch.device('cpu')))
