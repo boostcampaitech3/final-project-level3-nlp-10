@@ -17,12 +17,9 @@ class My_Dataset(Dataset):
 
     def load_data(self):
         raw_data = pd.read_csv(self.file_path)
-        train_data = '<s>'+raw_data['질문1']+'</s>'+'<s>'+raw_data['대답1']+'</s>'+
-                     '<s>'+raw_data['질문2']+'</s>'+'<s>'+raw_data['대답2']+'</s>'+
-                     '<s>'+raw_data['질문3']+'</s>'+'<s>'+raw_data['대답3']+'</s>'+
-                     '<s>'+raw_data['질문4']+'</s>'+'<s>'+raw_data['대답4']+'</s>'
-        tokenized_train_data = tokenizer.encode_batch(train_data)
-        for single_data in tokenized_train_data:
+        train_data ='<s>'+raw_data['질문1']+'</s>'+'<s>'+raw_data['대답1']+'</s>'+'<s>'+raw_data['질문2']+'</s>'+'<s>'+raw_data['대답2']+'</s>'+'<s>'+raw_data['질문3']+'</s>'+'<s>'+raw_data['대답3']+'</s>'+'<s>'+raw_data['질문4']+'</s>'+'<s>'+raw_data['대답4']+'</s>'            
+        tokenized_train_data = self.tokenizer.encode_batch(train_data)
+        for single_data in tokenized_train_data:            
             self.data.append(torch.tensor(single_data.ids).unsqueeze(0))
 
     def __len__(self):
@@ -79,7 +76,7 @@ def train():
         loss.backward()
         avg_loss = (avg_loss[0] * 0.99 + loss, avg_loss[1] * 0.99 + 1.0)
         optimizer.step()
-        if count % 10000 == 0:
+        if count % 200 == 0:
             print('epoch no.{0}  train ({1}/{2})  loss = {3:.5f}  avg_loss = {4:.5f}' . format(epoch, count, len(data_loader), loss, avg_loss[0] / avg_loss[1]))
         count += 1
   torch.save(model.state_dict(), os.path.join(f'./best_model_kogpt', 'multi_turn_model.bin'))
