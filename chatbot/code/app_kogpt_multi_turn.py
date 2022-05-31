@@ -6,7 +6,7 @@ from streamlit_chat import message
 import tokenizers
 import gdown
 
-st.header("kogpt2를 이용한 싱글턴 챗봇")
+st.header("kogpt2를 이용한 멀티턴 챗봇")
 
 @st.cache(hash_funcs={tokenizers.Tokenizer: lambda _: None, tokenizers.AddedToken: lambda _: None})
 def load():
@@ -17,12 +17,11 @@ def load():
 
     config = GPT2Config(vocab_size=50000)
     model = GPT2LMHeadModel(config)
-    # google_path = 'https://drive.google.com/uc?id='
-    # file_id = '1cTfhve195dZAxNPboBBqipxrowBPh1Vt'
-    # output_name = 'my_model.bin'
-    # gdown.download(google_path + file_id, output_name, quiet=False)
-    model_dir = 'best_model_kogpt/multi_turn_model.bin'
-    model.load_state_dict(torch.load(model_dir, map_location=torch.device('cpu')))
+    google_path = 'https://drive.google.com/uc?id='
+    file_id = '1HEQ3enItqS_wY7VA1GilBlDNVfU0OPI0'
+    output_name = 'multi_turn_model.bin'
+    gdown.download(google_path + file_id, output_name, quiet=False)
+    model.load_state_dict(torch.load(output_name, map_location=torch.device('cpu')))
 
     return model, tokenizer
 
@@ -37,7 +36,21 @@ if 'past' not in st.session_state:
 utter = st.text_input("당신: ", key="input")
 
 if utter:
-    encoded_utter = torch.tensor(tokenizer.encode('<s>' + utter + '</s><s>').ids).unsqueeze(0)
+    # st.session_state['past'] : user_input
+    # st.session_state['generated'] : chatbot
+    
+    prev = ''
+    prev += '<s><pad></s>' * (6 - (2 * min(len(st.session_state['past']), 3)))
+    if len(st.session_state['past']) >= 3:
+        for i in range(3):
+            prev += '<s>' + st.session_state['past'][i-3] + '</s>'
+            prev += '<s>' + st.session_state['generated'][i-3] + '</s>'
+    else:
+        for i in range(len(st.session_state['past'])):
+            prev += '<s>' + st.session_state['past'][i] + '</s>'
+            prev += '<s>' + st.session_state['generated'][i] + '</s>'
+
+    encoded_utter = torch.tensor(tokenizer.encode(prev + '<s>' + utter + '</s><s>').ids).unsqueeze(0)
 
     sample_output = model.generate(
         encoded_utter,
@@ -52,8 +65,8 @@ if utter:
     )
 
     decoded_output = tokenizer.decode_batch(sample_output.tolist())[0]
-
-    answer = decoded_output[len(utter)+1:]
+    x = decoded_output.index(utter)
+    answer = decoded_output[x + len(utter) + 1:]
 
     st.session_state.past.append(utter)
     st.session_state.generated.append(answer)
