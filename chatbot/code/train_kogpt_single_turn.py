@@ -6,34 +6,21 @@ from transformers import GPT2LMHeadModel
 import random
 from torch.utils.data import Dataset, DataLoader
 from transformers import AdamW
+import pandas as pd
 
 class My_Dataset(Dataset):
     def __init__(self, tokenizer):
 
         self.data = []
-        self.file = open("../data/dialog_single_turn.txt", 'r', encoding='utf-8')
+        self.file_path = "../data/dialog_single_turn.csv"
         self.tokenizer = tokenizer
 
     def load_data(self):
-        train_data_set = []
-        while True:
-            line = self.file.readline()
-            if not line:
-                break
-            
-            x = line.split('\t')
-            Q, A = x[0], x[1]           
-            A = A.rstrip('\n')
-
-            train_data = '<s>' + Q + '</s>' + '<s>' + A + '</s>'
-            train_data_set.append(train_data)
-
-        tokenized_train_data = self.tokenizer.encode_batch(train_data_set)
-      
-        for single_data in tokenized_train_data:
+        raw_data = pd.read_csv(self.file_path)
+        train_data ='<s>'+raw_data['질문']+'</s>'+'<s>'+raw_data['대답']+'</s>'            
+        tokenized_train_data = self.tokenizer.encode_batch(train_data)
+        for single_data in tokenized_train_data:            
             self.data.append(torch.tensor(single_data.ids).unsqueeze(0))
-
-        self.file.close()
 
     def __len__(self):
         return len(self.data)
