@@ -1,0 +1,9 @@
+protobuf==3.20.1
+streamlit==1.9.0
+streamlit-chat==0.0.2.1
+gdown
+transformers==4.5.1
+torch==1.8.1
+pytorch_lightning==1.2.10
+pandas
+numpy
