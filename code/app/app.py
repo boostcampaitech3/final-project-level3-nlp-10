@@ -48,15 +48,23 @@ if 'generated' not in st.session_state:
 if 'past' not in st.session_state:
     st.session_state['past'] = []
 
-
-user_id = st.text_input('', '이름을 입력하세요.')
-utter = st.text_input('당신 : ', '메세지를 입력하세요.')
+user_id = st.text_input('', placeholder = '이름을 입력하세요.')
+utter = st.text_input('당신 : ', key="msg", placeholder = '메세지를 입력하세요.')
 
 if st.button("전송"):
-    if uf(utter)[0][9]['score'] < 0.7:
+    
+    hate_score = uf(utter)[0][9]['score']
+    if hate_score < 0.7:
         st.warning('혐오 표현을 사용하지 마세요.')
         print(f'-------------------------------')
-        print(f'this is hate speech')
+        print(f'your name is {user_id}')
+        print(f'your message is {utter}')
+        print(f'max length is {maxlen}')
+        print(f'top k sampling value is {topk}')
+        print(f'top p sampling value is {topp}')
+        print(f'whether to sampling is {sampling}')
+        print(f'!!!!!!! this is hate speech !!!!!!!')
+        print(f'hate score is {hate_score}')
         print(f'-------------------------------')
 
     else:
@@ -67,6 +75,7 @@ if st.button("전송"):
         print(f'top k sampling value is {topk}')
         print(f'top p sampling value is {topp}')
         print(f'whether to sampling is {sampling}')
+        print(f'hate score is {hate_score}')
         print(f'-------------------------------')
         with torch.no_grad():
             user = '<usr>' + utter + '<unused1>' + ''
