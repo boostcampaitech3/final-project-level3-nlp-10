@@ -78,7 +78,7 @@ if st.button("전송"):
         print(f'hate score is {hate_score}')
         print(f'-------------------------------')
         with torch.no_grad():
-            user = '<usr>' + utter + '<unused1>' + ''
+            user = '<usr>' + utter + '<unused1>'
             encoded = tokenizer.encode(user)
             input_ids = torch.LongTensor(encoded).unsqueeze(dim=0)
             output = model.generate(input_ids,
@@ -87,17 +87,18 @@ if st.button("전송"):
                                     top_p=topp,
                                     do_sample=sampling,
                                     )
-            a = tokenizer.decode(output[0])
+            
+            a = tokenizer.decode(output[0]) # <usr> utter <unused1> sent <sys> answer </s>
             idx = torch.where(output[0]==tokenizer.encode('<sys>')[0])
-            chatbot = tokenizer.decode(output[0][int(idx[0])+1:], skip_special_tokens=True)
+            chatbot = tokenizer.decode(output[0][int(idx[0])+1:], skip_special_tokens=True) # answer
 
-            if '답변' in a: # 응, 아니 등이 input으로 들어왔을 때
+            if '답변' in a: # sent : 긍정답변 / 부정답변
                 if st.session_state['past']:
                     prev = st.session_state['past'][-1]
                 else:
                     prev = ''
 
-                user = '<usr>' + prev + utter + '<unused1>' + '' # 직전 history 가지고 와서 sentiment 고려해주기
+                user = '<usr>' + prev + utter + ' <unused1>' # multi-turn
                 encoded = tokenizer.encode(user)
                 input_ids = torch.LongTensor(encoded).unsqueeze(dim=0)
                 output = model.generate(input_ids,
