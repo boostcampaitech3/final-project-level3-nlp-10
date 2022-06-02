@@ -8,6 +8,15 @@ import torch
 from streamlit_chat import message
 import tokenizers
 import gdown
+from elasticsearch import Elasticsearch
+import json
+from tqdm import tqdm
+
+try:
+    es.transport.close()
+except:
+    pass
+es = Elasticsearch('http://localhost:9200')
 
 st.header("당신을 위로해주는 챗봇")
 
@@ -16,10 +25,98 @@ maxlen=st.sidebar.slider("max length of the sequence", 30, 60,value=50)
 topk=st.sidebar.slider("top k sampling", 10, 50, value=50)
 topp=st.sidebar.slider("top p sampling", 0.0, 1.0, step=0.01, value=0.95)
 sampling=st.sidebar.checkbox("do sampling", value=True)
-for _ in range(20): st.sidebar.text(" ")
+retrieval=st.sidebar.checkbox("do retrieval(BM25)", value=True)
+for _ in range(15): st.sidebar.text(" ")
 st.sidebar.subheader("Develop By.")
 st.sidebar.text("부스트캠프 AI Tech 3기")
 st.sidebar.text("NLP 10조 핫식스")
+
+@st.cache(hash_funcs={tokenizers.Tokenizer: lambda _: None, tokenizers.AddedToken: lambda _: None})
+def prepare_es(INDEX_NAME):
+    INDEX_NAME = INDEX_NAME
+    INDEX_SETTINGS = {
+        "settings" : {
+            "index":{
+                "analysis":{
+                    "analyzer":{
+                        "korean": {
+                            "type":"custom",
+                            "tokenizer":"nori_tokenizer",
+                            "decompound_mode": "mixed",
+                            "filter": [ "pos_filter_speech", "nori_readingform",
+                            "lowercase", "remove_duplicates"],
+                        }
+                    },
+                    "filter": {
+                        "pos_filter_speech": {
+                            "type": "nori_part_of_speech",
+                            "stoptags": [
+                                        "E",
+                                        "IC",
+                                        "J",
+                                        "MAG",
+                                        "MM",
+                                        "NA",
+                                        "NR",
+                                        "SC",
+                                        "SE",
+                                        "SF",
+                                        "SH",
+                                        "SL",
+                                        "SN",
+                                        "SP",
+                                        "SSC",
+                                        "SSO",
+                                        "SY",
+                                        "UNA",
+                                        "UNKNOWN",
+                                        "VA",
+                                        "VCN",
+                                        "VCP",
+                                        "VSV",
+                                        "VV",
+                                        "VX",
+                                        "XPN",
+                                        "XR",
+                                        "XSA",
+                                        "XSN",
+                                        "XSV"
+                                    ]
+                        }
+                    }
+                }
+            }
+        }
+    ,
+    "mappings": {
+            "properties" : {
+                "content" : {
+                    "type" : "text",
+                    "analyzer": "korean",
+                    "search_analyzer": "korean"
+                },
+                "title" : {
+                    "type" : "text",
+                    "analyzer": "korean",
+                    "search_analyzer": "korean"
+                }
+            }
+        } 
+    }
+
+    es.indices.create(index=INDEX_NAME, body=INDEX_SETTINGS)
+
+    with open("../../data/answer_total.json", "r") as file:
+        chat_dict = json.load(file) 
+
+    for doc_id, doc in tqdm(chat_dict.items()):
+        es.index(index=INDEX_NAME,  id=doc_id, body=doc)
+    
+    return
+
+INDEX_NAME = 'toy_index'
+if not es.indices.exists(index=INDEX_NAME):
+    prepare_es(INDEX_NAME)
 
 @st.cache(hash_funcs={tokenizers.Tokenizer: lambda _: None, tokenizers.AddedToken: lambda _: None})
 def load():
@@ -63,6 +160,7 @@ if st.button("전송"):
         print(f'top k sampling value is {topk}')
         print(f'top p sampling value is {topp}')
         print(f'whether to sampling is {sampling}')
+        print(f'whether to retrieval is {retrieval}')
         print(f'!!!!!!! this is hate speech !!!!!!!')
         print(f'hate score is {hate_score}')
         print(f'-------------------------------')
@@ -75,10 +173,11 @@ if st.button("전송"):
         print(f'top k sampling value is {topk}')
         print(f'top p sampling value is {topp}')
         print(f'whether to sampling is {sampling}')
+        print(f'whether to retrieval is {retrieval}')
         print(f'hate score is {hate_score}')
         print(f'-------------------------------')
         with torch.no_grad():
-            user = '<usr>' + utter + '<unused1>' + ''
+            user = '<usr>' + utter + '<unused1>'
             encoded = tokenizer.encode(user)
             input_ids = torch.LongTensor(encoded).unsqueeze(dim=0)
             output = model.generate(input_ids,
@@ -87,17 +186,18 @@ if st.button("전송"):
                                     top_p=topp,
                                     do_sample=sampling,
                                     )
-            a = tokenizer.decode(output[0])
+            
+            a = tokenizer.decode(output[0]) # <usr> utter <unused1> sent <sys> answer </s>
             idx = torch.where(output[0]==tokenizer.encode('<sys>')[0])
-            chatbot = tokenizer.decode(output[0][int(idx[0])+1:], skip_special_tokens=True)
+            chatbot = tokenizer.decode(output[0][int(idx[0])+1:], skip_special_tokens=True) # answer
 
-            if '답변' in a: # 응, 아니 등이 input으로 들어왔을 때
+            if '답변' in a: # sent : 긍정답변 / 부정답변
                 if st.session_state['past']:
                     prev = st.session_state['past'][-1]
                 else:
                     prev = ''
 
-                user = '<usr>' + prev + utter + '<unused1>' + '' # 직전 history 가지고 와서 sentiment 고려해주기
+                user = '<usr>' + prev + utter + ' <unused1>' # multi-turn
                 encoded = tokenizer.encode(user)
                 input_ids = torch.LongTensor(encoded).unsqueeze(dim=0)
                 output = model.generate(input_ids,
@@ -116,7 +216,15 @@ if st.button("전송"):
                 answer = chatbot.strip()
         
         if '00' in answer: 
-            answer = answer.replace('00', user_id)
+            answer = answer.replace('00', '사용자')
+
+        if retrieval:
+            res = es.search(index=INDEX_NAME, q=answer, size=3)
+            print(res)
+            answer = res['hits']['hits'][0]['_source']['text'].rstrip('\n')
+        
+        if '사용자' in answer:
+            answer = answer.replace('사용자', user_id)
 
         st.session_state['past'].append(utter)
         st.session_state['generated'].append(answer)

@@ -64,7 +64,7 @@ aistage 토론 게시판 참고
 
       $vi /etc/profile 실행
 
-      $export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64/jre
+      $export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64
 
       $export PATH=$PATH:$JAVA_HOME/bin
       (마지막 줄에 추가)
@@ -73,4 +73,4 @@ aistage 토론 게시판 참고
 
 
 7) 코드실행
-깃헙에 올라간 elastic.ipynb를 실행한 다음 오류가 생기면 알려주세요!
+5번 코드를 터미널에서 실행시키면서 elastic.ipynb 실행!

@@ -62,7 +62,6 @@ class CharDataset(Dataset):
             a_toked = a_toked[:a_len]
             a_len = len(a_toked)
             assert a_len == len(a_toked), f'{a_len} ==? {len(a_toked)}'
-        # [mask, mask, ...., mask, ..., <bos>,..A.. <eos>, <pad>....]
         labels = [self.mask,] * q_len + a_toked[1:]
         if self.first:
             logging.info("contexts : {}".format(q))
@@ -106,6 +105,9 @@ class KoGPT2Chat(LightningModule):
 
     def training_step(self, batch, batch_idx):
         token_ids, mask, label = batch
+        # token_ids: <usr>  Q  <sent>  SENTIMENT  <sys> A  </s>  <pad>...
+        # mask: [0]*q_len  [1]*a_len  [0]...
+        # label: <mask>*q_len  SENTIMENT  <sys>  A  </s>  <pad>...
         out = self(token_ids)
         mask_3d = mask.unsqueeze(dim=2).repeat_interleave(repeats=out.shape[2], dim=2)
         mask_out = torch.where(mask_3d == 1, out, self.neg * torch.ones_like(out))
