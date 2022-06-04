@@ -67,7 +67,7 @@ utter = st.text_input('당신 : ', key="msg", placeholder = '메세지를 입력
 if st.button("전송"):
     
     hate_score = uf(utter)[0][9]['score']
-    if hate_score < 0.4:
+    if hate_score < 0.1:
         st.warning('혐오 표현을 사용하지 마세요.')
         # print(f'-------------------------------')
         # print(f'your name is {user_id}')
