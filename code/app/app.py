@@ -144,13 +144,15 @@ if st.button("전송"):
         for i, ANSWER in enumerate(BEST_ANSWERS):            
             if '00' in ANSWER: 
                 BEST_ANSWERS[i] = ANSWER.replace('00', '사용자')        
+
         
         SEARCH_OUTPUT = {}
         for ANSWER in BEST_ANSWERS:
             res = es.search(index=INDEX_NAME, q=ANSWER, size=5)
 
-            if ANSWER not in SEARCH_OUTPUT.keys(): SEARCH_OUTPUT[ANSWER] = [1, 100]
-            else: SEARCH_OUTPUT[ANSWER][0] += 1; SEARCH_OUTPUT[ANSWER][1] += 100
+            if ANSWER[-1] in  ['.', '?', '!']:
+                if ANSWER not in SEARCH_OUTPUT.keys(): SEARCH_OUTPUT[ANSWER] = [1, 100]
+                else: SEARCH_OUTPUT[ANSWER][0] += 1; SEARCH_OUTPUT[ANSWER][1] += 100
 
             for hit in res['hits']['hits']:
                 score = hit['_score']    
@@ -164,6 +166,7 @@ if st.button("전송"):
             SEARCH_OUTPUT[k][1] /= SEARCH_OUTPUT[k][0]
         
         RESULT = list(sorted(SEARCH_OUTPUT.items(), key= lambda x:(-x[1][0], -x[1][1])))
+        print(RESULT)
         answer = RESULT[0][0]
 
         if '사용자' in answer:
