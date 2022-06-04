@@ -144,7 +144,8 @@ if st.button("전송"):
         for i, ANSWER in enumerate(BEST_ANSWERS):            
             if '00' in ANSWER: 
                 BEST_ANSWERS[i] = ANSWER.replace('00', '사용자')        
-            if '!' in ANSWER: BEST_ANSWERS[i] = ANSWER.replace('!', '.')
+            if '!' in ANSWER: 
+                BEST_ANSWERS[i] = ANSWER.replace('!', '.')
         
         SEARCH_OUTPUT = {}
         for ANSWER in BEST_ANSWERS:
@@ -166,13 +167,15 @@ if st.button("전송"):
             SEARCH_OUTPUT[k][1] /= SEARCH_OUTPUT[k][0]
         
         RESULT = list(sorted(SEARCH_OUTPUT.items(), key= lambda x:(-x[1][0], -x[1][1])))
-        print(RESULT)
-        answer = RESULT[0][0]
-        if not RESULT[0]: answer = '다시 한번 말씀해주실래요?'
+        if not RESULT[0]: 
+            answer = '다시 한번 말씀해주실래요?'
+        else:
+            print(RESULT)
+            answer = RESULT[0][0]
 
         if '사용자' in answer:
             answer = answer.replace('사용자', user_id)
-        
+
         DICT = {}
         DICT['user_id'] = user_id
         DICT['utter'] = utter
