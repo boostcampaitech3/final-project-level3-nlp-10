@@ -68,7 +68,7 @@ if st.button("전송"):
     
     hate_score = uf(utter)[0][9]['score']
     if hate_score < 0.1:
-        st.warning('혐오 표현을 사용하지 마세요.')
+        st.warning('순화된 표현을 사용해주세요.')
         # print(f'-------------------------------')
         # print(f'your name is {user_id}')
         # print(f'your message is {utter}')
