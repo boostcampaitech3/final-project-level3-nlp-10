@@ -112,4 +112,5 @@ streamlit run {app 파일} --server.port {부여받은 포트번호}
             ![1 (10)](https://user-images.githubusercontent.com/62659407/172053172-3ae29b04-9242-4e76-b7d0-b2bebb270586.png)
             
     - 시연 영상
-       
+       ![KakaoTalk_20220605_192331995](https://user-images.githubusercontent.com/62659407/172053397-11044ee5-d7a5-4b1d-adcb-aea95e954d38.gif)
+
