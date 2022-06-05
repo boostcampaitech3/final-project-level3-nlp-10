@@ -176,14 +176,6 @@ if st.button("전송"):
         if '사용자' in answer:
             answer = answer.replace('사용자', user_id)
 
-        DICT = {}
-        DICT['user_id'] = user_id
-        DICT['utter'] = utter
-        DICT['answer'] = answer         
-        f = open("logs.txt", "a") 
-        f.write(str(DICT) + '\n')     
-        f.close()  
-
         st.session_state['past'].append(utter)
         st.session_state['generated'].append(answer)        
 
