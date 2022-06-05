@@ -51,7 +51,7 @@ streamlit run {app 파일} --server.port {부여받은 포트번호}
         - Beam Search
             ![1 (4)](https://user-images.githubusercontent.com/62659407/172053095-70c1887c-00e0-4ed0-92cb-2f67ce024ab5.png)
 
-            - Task를 5번 수행하여 최다 예측된 심리상담 주제의 Answer을 최종 답변으로 추출 → Answer의 정확도 향상
+            - Task를 여러 번 수행하여 최다 예측된 심리상담 주제의 Answer을 최종 답변으로 추출 → Answer의 정확도 향상
 
         - Retrieve
             ![1 (5)](https://user-images.githubusercontent.com/62659407/172053102-3a642ab0-e99b-4852-9da4-1e9ecb6ed488.png)
