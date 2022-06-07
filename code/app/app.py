@@ -12,11 +12,7 @@ from elasticsearch import Elasticsearch
 import json
 from collections import defaultdict
 
-try:
-    es.transport.close()
-except:
-    pass
-es = Elasticsearch('http://localhost:9200')
+es = Elasticsearch('https://my-deployment-26ce26.es.us-central1.gcp.cloud.es.io:9243', http_auth=('elastic', 'kfBQYEGq1o6fgYMBomEegkLZ'))
 
 st.header("당신을 위로해주는 챗봇")
 
@@ -67,8 +63,8 @@ utter = st.text_input('당신 : ', key="msg", placeholder = '메세지를 입력
 if st.button("전송"):
     
     hate_score = uf(utter)[0][9]['score']
-    if hate_score < 0.4:
-        st.warning('혐오 표현을 사용하지 마세요.')
+    if hate_score < 0.1:
+        st.warning('조금 더 부드럽게 말해주세요.')
         # print(f'-------------------------------')
         # print(f'your name is {user_id}')
         # print(f'your message is {utter}')
@@ -104,11 +100,14 @@ if st.button("전송"):
 
             SENT_DICT = defaultdict(list)
             for o in output:
-                sent_idx = int(torch.where(o==tokenizer.encode('<unused1>')[0])[0])
-                sys_idx = int(torch.where(o==tokenizer.encode('<sys>')[0])[0])
-                SENT = tokenizer.decode(o[sent_idx+1:sys_idx])
-                ANS = tokenizer.decode(o[sys_idx+1:], skip_special_tokens=True)
-                SENT_DICT[SENT].append(ANS)
+                try:
+                    sent_idx = int(torch.where(o==tokenizer.encode('<unused1>')[0])[0])
+                    sys_idx = int(torch.where(o==tokenizer.encode('<sys>')[0])[0])
+                    SENT = tokenizer.decode(o[sent_idx+1:sys_idx])
+                    ANS = tokenizer.decode(o[sys_idx+1:], skip_special_tokens=True)
+                    SENT_DICT[SENT].append(ANS)
+                except:
+                    continue
             
             BEST_OUTPUT = list(sorted(SENT_DICT.items(), key=lambda x:-len(x[1])))[0]
             BEST_SENT, BEST_ANSWERS = BEST_OUTPUT[0], BEST_OUTPUT[1]
@@ -144,7 +143,8 @@ if st.button("전송"):
         for i, ANSWER in enumerate(BEST_ANSWERS):            
             if '00' in ANSWER: 
                 BEST_ANSWERS[i] = ANSWER.replace('00', '사용자')        
-
+            if '!' in ANSWER: 
+                BEST_ANSWERS[i] = ANSWER.replace('!', '.')
         
         SEARCH_OUTPUT = {}
         for ANSWER in BEST_ANSWERS:
@@ -166,19 +166,14 @@ if st.button("전송"):
             SEARCH_OUTPUT[k][1] /= SEARCH_OUTPUT[k][0]
         
         RESULT = list(sorted(SEARCH_OUTPUT.items(), key= lambda x:(-x[1][0], -x[1][1])))
-        print(RESULT)
-        answer = RESULT[0][0]
+        if not RESULT[0]: 
+            answer = '다시 한번 말씀해주실래요?'
+        else:
+            print(RESULT)
+            answer = RESULT[0][0]
 
         if '사용자' in answer:
             answer = answer.replace('사용자', user_id)
-
-        DICT = {}
-        DICT['user_id'] = user_id
-        DICT['utter'] = utter
-        DICT['answer'] = answer         
-        f = open("logs.txt", "a") 
-        f.write(str(DICT) + '\n')     
-        f.close()  
 
         st.session_state['past'].append(utter)
         st.session_state['generated'].append(answer)        
