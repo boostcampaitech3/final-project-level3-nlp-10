@@ -1,6 +1,6 @@
 ## WERODA(위로다)
 <a href="https://share.streamlit.io/jujeongho0/weroda/main/app.py" rel="nofollow"><img src="https://camo.githubusercontent.com/767be70c92254555bd347ab07908fec67854c2264b77702581bd230fd7eac54f/68747470733a2f2f7374617469632e73747265616d6c69742e696f2f6261646765732f73747265616d6c69745f62616467655f626c61636b5f77686974652e737667" alt="Open in Streamlit" data-canonical-src="https://static.streamlit.io/badges/streamlit_badge_black_white.svg" style="max-width: 100%;"></a>
-[![Run on Ainize](https://ainize.ai/images/run_on_ainize_button.svg)](https://ainize.web.app/redirect?git_repo=https://github.com/jujeongho0/weroda)
+[![Run on Ainize](https://ainize.ai/images/run_on_ainize_button.svg)](https://main-weroda-jujeongho0.endpoint.ainize.ai)
 
 #### Multi-Turn 기반의 심리상담 챗봇
 #### KoGPT2 및 Elastic Search를 이용해 구현
