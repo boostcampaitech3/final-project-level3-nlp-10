@@ -131,11 +131,14 @@ if st.button("전송"):
 
                 SENT_DICT = defaultdict(list)
                 for o in output:
-                    sent_idx = int(torch.where(o==tokenizer.encode('<unused1>')[0])[0])
-                    sys_idx = int(torch.where(o==tokenizer.encode('<sys>')[0])[0])
-                    SENT = tokenizer.decode(o[sent_idx+1:sys_idx])
-                    ANS = tokenizer.decode(o[sys_idx+1:], skip_special_tokens=True)
-                    SENT_DICT[SENT].append(ANS)
+                    try:
+                        sent_idx = int(torch.where(o==tokenizer.encode('<unused1>')[0])[0])
+                        sys_idx = int(torch.where(o==tokenizer.encode('<sys>')[0])[0])
+                        SENT = tokenizer.decode(o[sent_idx+1:sys_idx])
+                        ANS = tokenizer.decode(o[sys_idx+1:], skip_special_tokens=True)
+                        SENT_DICT[SENT].append(ANS)
+                    except:
+                        continue
                 
                 BEST_OUTPUT = list(sorted(SENT_DICT.items(), key=lambda x:-len(x[1])))[0]
                 BEST_SENT, BEST_ANSWERS = BEST_OUTPUT[0], BEST_OUTPUT[1]
