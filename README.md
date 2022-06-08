@@ -172,15 +172,15 @@ streamlit run {app} --server.port {포트번호}
 <br>
 
 ## Dataset
-- [AI-Hub] 웰니스 대화 스크립트 데이터셋
+- [[KETI] 웰니스 대화 스크립트 데이터셋](https://aihub.or.kr/opendata/keti-data/recognition-laguage/KETI-02-006)
     - 정신 건강 상담 주제의 359개 대화 의도에 대한 5,232개의 사용자 발화 및 1,023개의 챗봇 발화
     - KoGPT2 모델 학습, Retrieval 데이터셋 구축에 사용
-- [songys/Chatbot_data] Chit-Chat 데이터셋
+- [[songys/Chatbot_data] Chit-Chat 데이터셋](https://github.com/songys/Chatbot_data)
     - 다음 카페 "사랑보다 아름다운 실연([http://cafe116.daum.net/_c21_/home?grpid=1bld](http://cafe116.daum.net/_c21_/home?grpid=1bld))"에서 자주 나오는 이야기들을 참고하여 제작
     - 챗봇 학습용 문답 페어 11,876개
     - 일상 0, 이별(부정) 1, 사랑(긍정) 2로 라벨링
     - Retrieval 데이터셋 구축에 사용
-- [AI-Hub] 감성 대화 말뭉치
+- [[AI-Hub] 감성 대화 말뭉치](https://aihub.or.kr/aidata/7978)
     - 60가지 다양한 감정의 코퍼스 27만 문장
     - 우울증 관련 및 대화 응답 시나리오 포함
     - 감성 대화 엔진 또는 챗봇을 개발하려는 목적에 맞추어 제작
