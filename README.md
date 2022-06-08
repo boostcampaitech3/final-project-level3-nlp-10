@@ -120,7 +120,7 @@
 |:-:|:-:|:-:|:-:|:-:|:-:|
 |<img src='https://avatars.githubusercontent.com/u/54979241?v=4' height=80 width=80px></img>|<img src='https://user-images.githubusercontent.com/73579424/164642795-b5413071-8b14-458d-8d57-a2e32e72f7f9.png' height=80 width=80px></img>|<img src='https://avatars.githubusercontent.com/u/55140109?v=4' height=80 width=80px></img>|<img src='https://user-images.githubusercontent.com/73579424/164643061-599b9409-dc21-4f7a-8c72-b5d5dbfe9fab.jpg' height=80 width=80px></img>|<img src='https://user-images.githubusercontent.com/73579424/164643280-b0981ca3-528a-4c68-9331-b8f7a1cbe414.jpg' height=80 width=80px></img>|<img src='https://avatars.githubusercontent.com/u/97524127?v=4' height=80 width=80px></img>|
 |[Github](https://github.com/NHRWV)|[Github](https://github.com/wertat)|[Github](https://github.com/JEONSUN)|[Github](https://github.com/greenare)|[Github](https://github.com/jujeongho0)|[Github](https://github.com/timmyeos)|
-|Data 수집<br>혐오 표현 필터링|PM<br>서버 구현<br>Data 수집|Data 수집<br>EDA|Elastic Search<br>Data 수집|Modeling<br>UI 구현|Data 수집<br>DialogBERT|
+|Hate Speech Filtering<br>Data Collection|PM<br>Validation Server<br>Data Collection|EDA<br>Data Collection|Elastic Search<br>Text Style Transfer<br>Data Collection|Model Research<br>UI<br>Server Deploy|DialogBERT<br>Data Collection|
 <br>
 
 ## File Structure
