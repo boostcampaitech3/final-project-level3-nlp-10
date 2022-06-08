@@ -8,7 +8,7 @@
 
 
 
-# Mecab 설치
+## Mecab 설치
 ```
 !sudo apt-get install g++ openjdk-8-jdk python3-dev python3-pip curl<br>
 !python3 -m pip install --upgrade pip<br>
