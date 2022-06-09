@@ -169,6 +169,11 @@ pip install -r requirements.txt
 cd app
 streamlit run {app} --server.port {포트번호}
 ```       
+
+```
+docker build -t weroda_app .
+docker run -p 8501:8501 weroda_app
+```
 <br>
 
 ## Dataset
@@ -188,96 +193,121 @@ streamlit run {app} --server.port {포트번호}
     - Retrieval 데이터셋 구축에 사용
 <br>
 
-## Model
-- KoGPT2 (Multi DownStream Task)
-    ![1](https://user-images.githubusercontent.com/62659407/172053006-fab0eb7a-d7b5-4bb6-a2de-9b9deb777261.png)
+## EDA
+- 데이터 불균형 문제 확인
+- 자주 등장하는 단어 빈도 확인
+- 359개의 카테고리 클러스터링 수행
+    
+## 데이터 처리
+- 전처리
+    - 챗봇 답변 데이터 중복 제거
+    - Elasticsearch Nori 형태소 분석기 사용
+    - 불용어는 사용하지 않을 때 챗봇 성능이 더 높게 나옴 (SSA)
+- 후처리
+    - 발화와 답변에서 키워드를 추출하여 챗봇의 성능을 향상시키려 하였으나 실패
+- Augmentation
+    - Text Style Transfer
+        - Conditional BERT
+        - Stable Style Transfer
+        - 성능이 낮게 나와 실사용에는 무리가 있음
 
+## Model
+
+- RoBERTa
+    ![1](https://user-images.githubusercontent.com/62659407/172771830-d442c412-51fd-41bb-a528-d8068547d38d.png)
+    - Question을 심리상담 주제로 분류하여 해당 주제의 답변을 무작위로 선택
+    - 일상 대화도 심리상담 주제로 분류 → 일상 대화 불가능
+    
+- KoGPT2 (Single-Turn)
+    ![2](https://user-images.githubusercontent.com/62659407/172771850-64f83317-d10c-438d-91f7-ff54c52958c6.png)
+    - Question으로 Answer을 생성 → 분류 모델에 비해 훨씬 자연스러운 대화 가능
+    - 오직 사용자의 Question으로 Answer을 생성하기 때문에, 이전 대화를 활용하지 못함 → 새로운 맥락의 대화 불가능
+    - 생성 모델이기 때문에 생성된 답변의 완성도가 떨어짐
+    
+- KoGPT2 (Multi-Turn)
+    ![3](https://user-images.githubusercontent.com/62659407/172771884-bf326108-1717-4c09-980d-0efff97dd0a1.png)
+    - 최대 4턴의 이전 대화와 Question을 결합해 Answer을 생성 → 이전 대화를 활용한 연속된 대화 가능
+    - 이전 대화와 상관없는 Question도 이전 대화와 함께 결합되어 Answer을 생성 → 맥락에 맞지 않는 답변 생성
+    - 생성 모델이기 때문에 생성된 문장의 완성도가 떨어짐
+    
+- KoGPT2 (Multi DownStream Task)
+    <img width="1008" alt="스크린샷 2022-06-09 오후 12 55 42" src="https://user-images.githubusercontent.com/62659407/172771905-18629375-ff56-452b-8065-a762fc9a9a7d.png">
     - 다양한 DownStream Task를 수행할 수 있는 GPT2의 장점을 이용 → Question으로 심리상담 주제 분류와 Answer 생성을 동시에!
     - 심리상담 데이터는 Wellness DataSet, 일상 대화 데이터는 Chit-Chat DataSet을 이용
         - Wellness DataSet2에서 챗봇의 답변에 대한 응답 데이터는 <긍정답변>과 <부정답변>으로 전환 → Multi-Turn 대화에서 사용
-        ![1 (1)](https://user-images.githubusercontent.com/62659407/172053018-2ee6fef2-8dfa-4642-b29f-64685db847dc.png)
+        <img width="1157" alt="스크린샷 2022-06-09 오후 12 57 55" src="https://user-images.githubusercontent.com/62659407/172771937-59aba1ef-7378-4dd3-89c9-c37844ac03ab.png">
 
     - Auto-Regressive
-        ![1 (2)](https://user-images.githubusercontent.com/62659407/172053056-f376ca43-698b-43ac-8c13-ddc92763f8c1.png)
-
+        <img width="963" alt="스크린샷 2022-06-09 오후 12 58 59" src="https://user-images.githubusercontent.com/62659407/172771975-92474750-730c-4801-8645-284caef965df.png">
         - GPT2는 이전 토큰들을 이용해 다음 토큰을 예측 → Question 뿐만 아니라, 예측한 심리상담 주제를 이용해 Answer을 생성 → 문맥에 맞는 Answer 생성
-
+        
     - Multi-Turn
-        ![1 (3)](https://user-images.githubusercontent.com/62659407/172053076-f0dfdb4d-75d0-4104-9ee8-7e4a24332c76.png)
-
-        - Question을 긍정 답변 및 부정 답변으로 예측했을 때, 사용자의 이전 Question을 추가해 다시 Task 진행 → 연속한 대화 수행 가능
-
+        <img width="934" alt="스크린샷 2022-06-09 오후 12 59 55" src="https://user-images.githubusercontent.com/62659407/172771999-0a77c085-5d40-4ad1-9d62-a63e85a871fd.png">
+        - Question을 긍정 답변 및 부정 답변으로 예측했을 때, 사용자의 이전 Question을 추가해 다시 Task 진행 → 연속한 대화 수행 가능  
+        
     - Beam Search
-        ![1 (4)](https://user-images.githubusercontent.com/62659407/172053095-70c1887c-00e0-4ed0-92cb-2f67ce024ab5.png)
-
-        - Task를 여러 번 수행하여 최다 예측된 심리상담 주제의 Answer을 최종 답변으로 추출 → Answer의 정확도 향상
-
+        <img width="1050" alt="스크린샷 2022-06-09 오후 1 00 49" src="https://user-images.githubusercontent.com/62659407/172772032-03259fdc-2328-40c3-815f-e10a71d39e6c.png">
+        - Task를 여러 번 수행하여 최다 예측된 심리상담 주제의 Answer을 최종 답변으로 추출 → Answer의 정확도 향상     
+        
     - Retrieve
-        ![1 (5)](https://user-images.githubusercontent.com/62659407/172053102-3a642ab0-e99b-4852-9da4-1e9ecb6ed488.png)
-
+        <img width="1062" alt="스크린샷 2022-06-09 오후 1 01 46" src="https://user-images.githubusercontent.com/62659407/172772097-2d4eec48-7d6c-4a4d-af7a-64dc680b434b.png">
         - GPT 계열의 생성 모델의 특성 상 Answer의 완성도가 떨어져 챗봇의 성능 하락을 야기
-
-        ![1 (6)](https://user-images.githubusercontent.com/62659407/172053119-249763b3-0eea-4515-a6bc-5ff8662df2f4.png)
+            <img width="1091" alt="스크린샷 2022-06-09 오후 1 02 34" src="https://user-images.githubusercontent.com/62659407/172772117-54b60bb4-48e2-4ee0-b57c-963dc9155560.png">
 
         → Answer Dataset을 구축하여 Elastic Search의 BM25 Retrieval을 이용해 생성된 Answer과 가장 유사한 답변을 Answer Dataset에서 추출하여 답변으로 채택
-
+        
     - Conclusion
-        ![1 (7)](https://user-images.githubusercontent.com/62659407/172053132-442b2dc4-c8cc-4e0f-854f-c6abadf036f6.png) 
+        - Workflow
+            <img width="1092" alt="스크린샷 2022-06-09 오후 1 03 38" src="https://user-images.githubusercontent.com/62659407/172772153-2b465067-db8a-40c1-bcd7-a5a6ed6be945.png">
+            - 위의 기능들을 모두 결합하고 발전시켜 다음과 같은 과정으로 최종 답변으로 선택
+                1. KoGPT2: Question을 이용해 심리상담 주제와 Answer을 5번 생성
+                2. Beam Search: 최다 예측된 심리상담 주제의 답변을 채택 → 답변 후보에 추가
+                3. Retrieve: 채택된 답변과 유사한 답변을 Answer Dataset에서 5개 검색 → 유사도 점수가 10점 이상인  유사 답변을 답변 후보에 추가
+                4. Count: 답변 후보에서 최다 빈도의 답변을 최종 답변으로 선택
+            
+        - Timeline
+              ![4](https://user-images.githubusercontent.com/62659407/172772182-83b997eb-17ef-4862-9adb-ae65b55399ae.png)
 
-        - 위의 기능들을 모두 결합하고 발전시켜 다음과 같은 과정으로 최종 답변으로 선택
-            1. KoGPT2: Question을 이용해 심리상담 주제와 Answer을 5번 생성
-            2. Beam Search: 최다 예측된 심리상담 주제의 답변을 채택 → 답변 후보에 추가
-            3. Retrieve: 채택된 답변과 유사한 답변을 Answer Dataset에서 5개 검색 → 유사도 점수가 10점 이상인  유사 답변을 답변 후보에 추가
-            4. Count: 답변 후보에서 최다 빈도의 답변을 최종 답변으로 선택
+
+## Product Serving
+    - Service Architecture
+        ![5](https://user-images.githubusercontent.com/62659407/172772270-fc8ed47a-18e9-49f2-a92d-d43e94935be9.png)
 <br>
 
-## WorkFlow
-![1 (8)](https://user-images.githubusercontent.com/62659407/172053145-98ba7b1b-56e5-460c-a388-540f75669fac.png)
+## Result
+- 시연 영상
+    ![KakaoTalk_20220605_192331995](https://user-images.githubusercontent.com/62659407/172053397-11044ee5-d7a5-4b1d-adcb-aea95e954d38.gif)
 
-1. 사용자가 Question을 입력
-2. Korean UnSmile Dataset으로 학습한 혐오 표현 필터링 모델을 통해 Question의 혐오 표현 점수 확인 → 0.1점 미만이면, 혐오 표현으로 간주해 사용자에게 ‘순화된 표현을 사용하세요’  경고 및 Question 재입력 요구
-3. Model을 이용해 Question에 대한 적절한 Answer 생성 및 출력
-4. Streamlit을 이용해 위 과정을 Chatting 형태의 Web 구현
-<br>
-
-## Validation
-- 모델 성능 평가 지표 (SSA)
+- 모델 성능평가 지표 (SSA)
     - 2020년 구글이 챗봇 Meena를 발표하면서 도입한 대화 만족도 평가 지표
     - Sensibleness : 답변의 맥락과 논리성 평가
     - Specificity : 답변의 구체성과 사람과의 유사성 평가
     - e.g. 너 중국 음식 좋아해?
-
+        
         → 오늘 메뉴가 뭔가요? (Sensibleness :0, Specificity: 0)
-
+        
         → 응, 좋아해. (Sensibleness :1, Specificity: 0)
-
+        
         → 응, 난 그 중에 ‘짜장면이’ 제일 좋아. (Sensibleness :1, Specificity: 1)
+        
 
-
-- 작업자 간 일치도 평가
+- 평가자 간 일치도 평가
     - 구글 Meena 발표 논문의 작업자 간 일치도 평가 방법을 참조
     - Krippendorff’s alpha : 0~1 사이의 값(0 불일치, 1 일치)을 가짐
     - Agreement는 SSA 계산을 위해 사용.
-    ![1 (9)](https://user-images.githubusercontent.com/62659407/172053157-6a90fb70-702f-4c29-94aa-dfdc7f8b25fd.png)
-
+    ![1 (1)](https://user-images.githubusercontent.com/62659407/172772462-b5502740-adeb-46a3-be54-ac79af2f686f.png)
     ⇒ 팀의 작업자 간 일치도 평가 점수가 구글 Meena 발표 논문보다 높음 → 팀의 평가 일치도 ↑
+    
+
+- 모델 별 성능 측정 및 비교
+    - 모델 성능 측정
+        <img width="1216" alt="스크린샷 2022-06-09 오후 1 05 30" src="https://user-images.githubusercontent.com/62659407/172772528-7b59361f-b316-4e40-bd23-c780e7436f48.png">
+    
+    - 타 모델과 비교
+        ![1 (2)](https://user-images.githubusercontent.com/62659407/172772502-e4d4a53d-96d0-4d80-9af8-63118038ce79.png)
 
 
-- 모델 별 성능 평가
-    - 모델 성능
-        - Sensibleness: 66.60
-        - Specificity: 59.39
-        - SSA: 62.99
-
-    - 다른 모델과 비교
-        ![1 (10)](https://user-images.githubusercontent.com/62659407/172053172-3ae29b04-9242-4e76-b7d0-b2bebb270586.png)
-<br>
-
-## Demo
-![KakaoTalk_20220605_192331995](https://user-images.githubusercontent.com/62659407/172053397-11044ee5-d7a5-4b1d-adcb-aea95e954d38.gif)
-
-
-## Korean UnSmile Dataset
+## Korean UnSmile Dataset (혐오 표현 필터링 모델 학습에 사용)
 ```
 @misc{SmilegateAI2022KoreanUnSmileDataset,
   title         = {Korean UnSmile dataset: Human-annotated Multi-label Korean Hate Speech Dataset},
