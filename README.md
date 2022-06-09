@@ -298,13 +298,12 @@ docker run -p 8501:8501 weroda_app
             
         - Timeline
         
-              ![4](https://user-images.githubusercontent.com/62659407/172772182-83b997eb-17ef-4862-9adb-ae65b55399ae.png)
+             ![4](https://user-images.githubusercontent.com/62659407/172772182-83b997eb-17ef-4862-9adb-ae65b55399ae.png)
               
 <br>
 
 ## Product Serving
 - Service Architecture
-
         ![5](https://user-images.githubusercontent.com/62659407/172772270-fc8ed47a-18e9-49f2-a92d-d43e94935be9.png)
         
 <br>
