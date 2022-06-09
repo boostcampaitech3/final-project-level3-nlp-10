@@ -5,7 +5,7 @@ COPY requirements.txt ./requirements.txt
 RUN pip install --upgrade pip && \
     pip install -r requirements.txt
 
-EXPOSE 80
+EXPOSE 8501
 COPY . .
 ENTRYPOINT ["streamlit", "run"]
 CMD ["code/app/app.py"]

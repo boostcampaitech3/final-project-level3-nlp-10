@@ -5,6 +5,7 @@ import streamlit as st
 from streamlit_chat import message
 import tokenizers
 import gdown
+import os
 
 st.header("kogpt2를 이용한 멀티턴 챗봇")
 
