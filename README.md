@@ -197,6 +197,7 @@ docker run -p 8501:8501 weroda_app
 - 데이터 불균형 문제 확인
 - 자주 등장하는 단어 빈도 확인
 - 359개의 카테고리 클러스터링 수행
+<br>
     
 ## 데이터 처리
 - 전처리
@@ -210,9 +211,9 @@ docker run -p 8501:8501 weroda_app
         - Conditional BERT
         - Stable Style Transfer
         - 성능이 낮게 나와 실사용에는 무리가 있음
+<br>
 
 ## Model
-
 - RoBERTa
     ![1](https://user-images.githubusercontent.com/62659407/172771830-d442c412-51fd-41bb-a528-d8068547d38d.png)
     - Question을 심리상담 주제로 분류하여 해당 주제의 답변을 무작위로 선택
@@ -267,10 +268,10 @@ docker run -p 8501:8501 weroda_app
             
         - Timeline
               ![4](https://user-images.githubusercontent.com/62659407/172772182-83b997eb-17ef-4862-9adb-ae65b55399ae.png)
-
+<br>
 
 ## Product Serving
-    - Service Architecture
+- Service Architecture
         ![5](https://user-images.githubusercontent.com/62659407/172772270-fc8ed47a-18e9-49f2-a92d-d43e94935be9.png)
 <br>
 
@@ -305,7 +306,7 @@ docker run -p 8501:8501 weroda_app
     
     - 타 모델과 비교
         ![1 (2)](https://user-images.githubusercontent.com/62659407/172772502-e4d4a53d-96d0-4d80-9af8-63118038ce79.png)
-
+<br>
 
 ## Korean UnSmile Dataset (혐오 표현 필터링 모델 학습에 사용)
 ```
