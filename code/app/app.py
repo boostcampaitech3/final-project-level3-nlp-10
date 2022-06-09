@@ -42,7 +42,7 @@ def load():
     uf = TextClassificationPipeline(
         model=uf_model,
         tokenizer=uf_tokenizer,
-        device=0,     # cpu는 -1, gpu일 땐 gpu number라고 함. 처음엔 0.
+        device=-1,     # cpu는 -1, gpu일 땐 gpu number라고 함. 처음엔 0.
         return_all_scores=True,
         )
 
