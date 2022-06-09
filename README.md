@@ -191,6 +191,15 @@ docker run -p 8501:8501 weroda_app
     - 감성 대화 엔진 또는 챗봇을 개발하려는 목적에 맞추어 제작
     - 형태소 단위의 세부 태깅을 하지 않고 문장 단위의 정합성만 검수하면 데이터 모델링에 큰 문제가 없으며, 문장에서 의미와 의도를 추출하는 확률이 기존 통계 모델링 기법(CRF+ 등)에 비해 월등히 높은 성능을 보여줌
     - Retrieval 데이터셋 구축에 사용
+- Korean UnSmile Dataset
+    ```
+    @misc{SmilegateAI2022KoreanUnSmileDataset,
+      title         = {Korean UnSmile dataset: Human-annotated Multi-label Korean Hate Speech Dataset},
+      author        = {Seonghyun Kim},
+      year          = {2022},
+      howpublished  = {\url{https://github.com/smilegate-ai/korean_unsmile_dataset}},
+    }
+    ```
 <br>
 
 ## EDA
@@ -346,14 +355,3 @@ docker run -p 8501:8501 weroda_app
     - 타 모델과 비교
     
         ![1 (2)](https://user-images.githubusercontent.com/62659407/172772502-e4d4a53d-96d0-4d80-9af8-63118038ce79.png)
-<br>
-
-## Korean UnSmile Dataset (혐오 표현 필터링 모델 학습에 사용)
-```
-@misc{SmilegateAI2022KoreanUnSmileDataset,
-  title         = {Korean UnSmile dataset: Human-annotated Multi-label Korean Hate Speech Dataset},
-  author        = {Seonghyun Kim},
-  year          = {2022},
-  howpublished  = {\url{https://github.com/smilegate-ai/korean_unsmile_dataset}},
-}
-```
