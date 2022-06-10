@@ -20,11 +20,7 @@ def load():
     model = GPT2LMHeadModel(config)
     google_path = 'https://drive.google.com/uc?id='
     file_id = '1f9_ez8l3Yvmb8faVpa9iHXyMvhhBihGw'
-<<<<<<< HEAD:code/app/app_kogpt_single_turn.py
     output_name = '../model/single_turn_model.bin'
-=======
-    output_name = 'single_turn_model.bin'
->>>>>>> ee8d1d69fc284b8925c710663c8473c3b90802fe:chatbot/code/app_kogpt_single_turn.py
     gdown.download(google_path + file_id, output_name, quiet=False)
     model.load_state_dict(torch.load(output_name, map_location=torch.device('cpu')))
 
