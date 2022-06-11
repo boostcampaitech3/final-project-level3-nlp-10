@@ -13,7 +13,7 @@
 ## 📋 Report
 
 최종 발표 PPT(다운로드) : [NLP_10조_WERODA(심리상담 챗봇).pptx](https://github.com/boostcampaitech3/final-project-level3-nlp-10/files/8883550/NLP_10._WERODA.pptx)  
-최종 발표 PPT PDF(다운로드) : [NLP_10조_WERODA(심리상담 챗봇).pdf](https://github.com/boostcampaitech3/final-project-level3-nlp-10/files/8883552/NLP_10._WERODA.pdf)
+최종 발표 PPT PDF(다운로드) : [NLP_10조_WERODA(심리상담 챗봇).pdf](https://github.com/boostcampaitech3/final-project-level3-nlp-10/files/8883552/NLP_10._WERODA.pdf)   
 최종 프로젝트 WrapUP 리포트(PDF 파일 다운로드) :
  
 
@@ -94,7 +94,7 @@
 > 
 > 발표 녹화 마지막 피드백
 >
->발표 스크립트에서 어색한 표현 지적. -> 피드백 반영해서 수정 후 발표 완료.
+>발표 스크립트에서 어색한 표현 지적. -> 피드백 반영해서 수정 후 발표 완료.   
 >무엇보다 결과물을 지속적으로 개선하는 과정이 잘 담겨있다는 점이 마음에 듦.
 
     
