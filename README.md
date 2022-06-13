@@ -179,7 +179,7 @@
 |:-:|:-:|:-:|:-:|:-:|:-:|
 |<img src='https://avatars.githubusercontent.com/u/54979241?v=4' height=80 width=80px></img>|<img src='https://user-images.githubusercontent.com/73579424/164642795-b5413071-8b14-458d-8d57-a2e32e72f7f9.png' height=80 width=80px></img>|<img src='https://avatars.githubusercontent.com/u/55140109?v=4' height=80 width=80px></img>|<img src='https://user-images.githubusercontent.com/73579424/164643061-599b9409-dc21-4f7a-8c72-b5d5dbfe9fab.jpg' height=80 width=80px></img>|<img src='https://user-images.githubusercontent.com/73579424/164643280-b0981ca3-528a-4c68-9331-b8f7a1cbe414.jpg' height=80 width=80px></img>|<img src='https://avatars.githubusercontent.com/u/97524127?v=4' height=80 width=80px></img>|
 |[Github](https://github.com/NHRWV)|[Github](https://github.com/wertat)|[Github](https://github.com/JEONSUN)|[Github](https://github.com/greenare)|[Github](https://github.com/jujeongho0)|[Github](https://github.com/timmyeos)|
-|Hate Speech Filtering<br>Data Collection<br>ChatBot Evaluation|PM<br>Validation Server<br>Data Collection<br>ChatBot Evaluation|EDA<br>Data Collection<br>ChatBot Evaluation|Elastic Search<br>Text Style Transfer<br>Data Collection<br>ChatBot Evaluation|Model Research<br>UI<br>Server Deploy<br>ChatBot Evaluation|DialogBERT<br>Data Collection<br>ChatBot Evaluation|
+|· Hate Speech Filter<br>· Data Collection|· PM<br>· Validation Server<br>· Data Collection|· EDA<br>· Data Collection|· Elastic Search<br>· Text Style Transfer<br>· Data Collection|· Model Research<br>· UI<br>· Server Deploy|· DialogBERT<br>· Data Collection|
 <br>
 
 ## File Structure
@@ -335,8 +335,9 @@ docker run -p 8501:8501 weroda_app
     
 - 모델 별 성능 측정 및 비교
     - 모델 성능 측정
-    
-        <img src="https://user-images.githubusercontent.com/62659407/172772528-7b59361f-b316-4e40-bd23-c780e7436f48.png" width="60%">
+        - Sensibleness : 66.60
+        - Specificity : 59.26
+        - SSA : 62.93
         <br>
     
     - 타 모델과 비교
