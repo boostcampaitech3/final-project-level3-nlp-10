@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # coding: utf-8
 
+# !pip install sentence-transformers
+
 import os
 import streamlit as st
 from transformers import GPT2LMHeadModel, PreTrainedTokenizerFast, TextClassificationPipeline, BertForSequenceClassification, AutoTokenizer
@@ -10,9 +12,13 @@ import tokenizers
 import gdown
 from elasticsearch import Elasticsearch
 import json
+import pickle
 from collections import defaultdict
 
-es = Elasticsearch('https://my-deployment-26ce26.es.us-central1.gcp.cloud.es.io:9243', http_auth=('elastic', 'kfBQYEGq1o6fgYMBomEegkLZ'))
+from sklearn.cluster import KMeans
+from sentence_transformers import SentenceTransformer, util
+
+# es = Elasticsearch('https://my-deployment-26ce26.es.us-central1.gcp.cloud.es.io:9243', http_auth=('elastic', 'kfBQYEGq1o6fgYMBomEegkLZ'))
 
 st.header("당신을 위로해주는 챗봇")
 
@@ -28,7 +34,7 @@ st.sidebar.text("NLP 10조 핫식스")
 
 INDEX_NAME = 'toy_index'
 
-@st.cache(hash_funcs={tokenizers.Tokenizer: lambda _: None, tokenizers.AddedToken: lambda _: None})
+@st.cache(hash_funcs={tokenizers.Tokenizer: lambda _: None, tokenizers.AddedToken: lambda _: None}, allow_output_mutation=True)
 def load():
     google_path = 'https://drive.google.com/uc?id='
     file_id = '1pNG24Wpq1g_OMtrMLN27Kl7OxbvPuM8A'
@@ -50,6 +56,25 @@ def load():
     return model, tokenizer, uf
 
 model, tokenizer, uf= load()
+
+@st.cache(allow_output_mutation=True)
+def model_embs():
+    sbert_model =  SentenceTransformer('jhgan/ko-sroberta-multitask')
+    
+    google_path = 'https://drive.google.com/uc?id=1GS6FVw2tKVOO-yCz6mWiWXHIZVHFR25_'
+    output_name = '../SBERT/answer_embs.pickle'
+    gdown.download(google_path, output_name, quiet=False)
+    with open('../SBERT/answer_embs.pickle', 'rb') as f:
+        answer_embs = pickle.load(f)
+
+    google_path = 'https://drive.google.com/uc?id=1Gc7Zh-inL8YxKg4HCUsUWKGeBWeOyBWk'
+    output_name = '../SBERT/answers.pickle'
+    gdown.download(google_path, output_name, quiet=False)
+    with open('../SBERT/answers.pickle', 'rb') as f:
+        answers = pickle.load(f)
+    return sbert_model, answer_embs, answers
+
+sbert_model, answer_embs, answers = model_embs()
 
 if 'generated' not in st.session_state:
     st.session_state['generated'] = []
@@ -148,32 +173,81 @@ if utter and submitted:
                     BEST_OUTPUT = list(sorted(SENT_DICT.items(), key=lambda x:-len(x[1])))[0]
                     BEST_SENT, BEST_ANSWERS = BEST_OUTPUT[0], BEST_OUTPUT[1]
 
-            for i, ANSWER in enumerate(BEST_ANSWERS):            
-                if '00' in ANSWER: 
-                    BEST_ANSWERS[i] = ANSWER.replace('00', '사용자')        
-                if '!' in ANSWER: 
-                    BEST_ANSWERS[i] = ANSWER.replace('!', '.')
-            
-            SEARCH_OUTPUT = {}
-            for ANSWER in BEST_ANSWERS:
-                res = es.search(index=INDEX_NAME, q=ANSWER, size=5)
-
-                if ANSWER[-1] in  ['.', '?', '!']:
-                    if ANSWER not in SEARCH_OUTPUT.keys(): SEARCH_OUTPUT[ANSWER] = [1, 100]
-                    else: SEARCH_OUTPUT[ANSWER][0] += 1; SEARCH_OUTPUT[ANSWER][1] += 100
-
-                for hit in res['hits']['hits']:
-                    score = hit['_score']    
-                    text = hit['_source']['text'].rstrip('\n')
-
-                    if score >= 10.0:
-                        if text not in SEARCH_OUTPUT.keys(): SEARCH_OUTPUT[text] = [1, score]
-                        else: SEARCH_OUTPUT[text][0] += 1; SEARCH_OUTPUT[text][1] += score
+            # elastic search
+            if False: 
+                for i, ANSWER in enumerate(BEST_ANSWERS):            
+                    if '00' in ANSWER: 
+                        BEST_ANSWERS[i] = ANSWER.replace('00', '사용자')        
+                    if '!' in ANSWER: 
+                        BEST_ANSWERS[i] = ANSWER.replace('!', '.')
                 
-            for k in SEARCH_OUTPUT.keys():
-                SEARCH_OUTPUT[k][1] /= SEARCH_OUTPUT[k][0]
-            
-            RESULT = list(sorted(SEARCH_OUTPUT.items(), key= lambda x:(-x[1][0], -x[1][1])))
+                SEARCH_OUTPUT = {}
+                for ANSWER in BEST_ANSWERS:
+                    res = es.search(index=INDEX_NAME, q=ANSWER, size=5)
+
+                    if ANSWER[-1] in  ['.', '?', '!']:
+                        if ANSWER not in SEARCH_OUTPUT.keys(): SEARCH_OUTPUT[ANSWER] = [1, 100]
+                        else: SEARCH_OUTPUT[ANSWER][0] += 1; SEARCH_OUTPUT[ANSWER][1] += 100
+
+                    for hit in res['hits']['hits']:
+                        score = hit['_score']    
+                        text = hit['_source']['text'].rstrip('\n')
+
+                        if score >= 10.0:
+                            if text not in SEARCH_OUTPUT.keys(): SEARCH_OUTPUT[text] = [1, score]
+                            else: SEARCH_OUTPUT[text][0] += 1; SEARCH_OUTPUT[text][1] += score
+
+                for k in SEARCH_OUTPUT.keys():
+                    SEARCH_OUTPUT[k][1] /= SEARCH_OUTPUT[k][0]
+                
+                RESULT = list(sorted(SEARCH_OUTPUT.items(), key= lambda x:(-x[1][0], -x[1][1])))
+
+            # SBERT
+            if True:
+                # 생성 답변들과 유사한 답변 후보들 retrieve
+                answer_candidates = []
+                for ANSWER in BEST_ANSWERS:
+                    answer_emb = sbert_model.encode(ANSWER)
+
+                    top_k = 5
+                    cos_scores = util.pytorch_cos_sim(answer_emb, answer_embs)[0]   # 생성 답변 - 답변 후보군 간 코사인 유사도 계산 후,
+                    top_results = torch.topk(cos_scores, k=top_k)   # 코사인 유사도 순으로 `top_k` 개 문장 추출
+
+                    # 답변 후보에 추가
+                    answer_candidates.extend([answers[i] for i in top_results[1]])
+
+                    # 생성 답변도 완전한 문장이라면, 답변 후보에 추가
+                    if ANSWER[-1] in  ['.', '?', '!']:
+                        answer_candidates.append(ANSWER)
+                # print(answer_candidates)
+                answer_can_embs = sbert_model.encode(answer_candidates) # 답변 후보 임베딩
+
+                # 1. 답변 후보들 중 "사용자 발화"와 가장 유사한 것 반환
+                user = user[5:-9] # 사용자 발화에서 special token 제외
+                user_emb = sbert_model.encode(user)
+                
+                cos_scores = util.pytorch_cos_sim(user_emb, answer_can_embs)[0] # 사용자 발화 - 추려진 답변 후보군 간 코사인 유사도 계산 후,
+                top_results = torch.topk(cos_scores, k=top_k)   # 코사인 유사도 순으로 `top_k` 개 문장 추출
+
+                RESULT = [(answer_candidates[i], score) for score, i in zip(top_results[0], top_results[1])]
+                
+                # # 2. 답변 후보들을 클러스터링하여 최다 클러스터의 답변 반환
+                # num_clusters = 3
+
+                # k_means = KMeans(n_clusters=num_clusters)
+                # k_means.fit(answer_can_embs)
+
+                # cluster_assignment = k_means.labels_
+
+                # # 클러스터 개수 만큼 문장을 담을 리스트 초기화
+                # clustered_sentences = [[] for _ in range(num_clusters)]
+                # # 클러스터링 결과를 돌며 각 클러스터에 맞게 문장 삽입
+                # for sentence_id, cluster_id in enumerate(cluster_assignment):
+                #     clustered_sentences[cluster_id].append(answer_candidates[sentence_id])
+                # print(clustered_sentences)
+                # RESULT = sorted(clustered_sentences, key= lambda x: -len(x))
+
+
             if not RESULT[0]: 
                 answer = '다시 한번 말씀해주실래요?'
             else:
