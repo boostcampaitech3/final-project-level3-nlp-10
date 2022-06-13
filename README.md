@@ -346,8 +346,7 @@ docker run -p 8501:8501 weroda_app
         
         → GPT 계열의 생성 모델의 특성 상 Answer의 완성도가 떨어져 챗봇의 성능 하락을 야기
         <br>
-        
-            <img width="1091" alt="스크린샷 2022-06-09 오후 1 02 34" src="https://user-images.githubusercontent.com/62659407/172772117-54b60bb4-48e2-4ee0-b57c-963dc9155560.png">
+        <img width="1091" alt="스크린샷 2022-06-09 오후 1 02 34" src="https://user-images.githubusercontent.com/62659407/172772117-54b60bb4-48e2-4ee0-b57c-963dc9155560.png">
 
         → Answer Dataset을 구축하여 Elastic Search의 BM25 Retrieval을 이용해 생성된 Answer과 가장 유사한 답변을 Answer Dataset에서 추출하여 답변으로 채택
         <br>
