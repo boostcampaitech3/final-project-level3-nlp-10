@@ -14,7 +14,8 @@
 
 최종 발표 PPT(다운로드) : [NLP_10조_WERODA(심리상담 챗봇).pptx](https://github.com/boostcampaitech3/final-project-level3-nlp-10/files/8883550/NLP_10._WERODA.pptx)  
 최종 발표 PPT PDF(다운로드) : [NLP_10조_WERODA(심리상담 챗봇).pdf](https://github.com/boostcampaitech3/final-project-level3-nlp-10/files/8883552/NLP_10._WERODA.pdf)   
-최종 프로젝트 WrapUP 리포트(PDF 파일 다운로드) :
+최종 프로젝트 WrapUP 리포트(PDF 파일 다운로드) : [최종프로젝트_NLP_팀 리포트(10조).pdf](https://github.com/boostcampaitech3/final-project-level3-nlp-10/files/8899156/_NLP_.10.pdf)
+
  
 
 </br>
