@@ -7,6 +7,15 @@
 #### Multi-Turn 기반의 심리상담 챗봇
 #### KoGPT2 및 Elastic Search를 이용해 구현
 
+<br>
+
+## 🎥 발표 영상
+
+[![발표영상](http://img.youtube.com/vi/lP6Ye3dlld8/0.jpg)](https://youtu.be/lP6Ye3dlld8?t=0s)
+
+이미지를 클릭하시면 Youtube 링크로 연결됩니다. (약 11분)
+
+
 
 <br>
 
