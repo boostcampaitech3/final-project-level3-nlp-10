@@ -13,7 +13,7 @@
 
 [![발표영상](http://img.youtube.com/vi/lP6Ye3dlld8/0.jpg)](https://youtu.be/lP6Ye3dlld8?t=0s)
 
-이미지를 클릭하시면 Youtube 링크로 연결됩니다. (약 11분)
+이미지를 클릭하시면 Youtube 링크로 연결됩니다. (약 12분)
 
 
 
@@ -192,7 +192,7 @@
 |· Hate Speech Filter<br>· Data Collection|· PM<br>· Validation Server<br>· Data Collection|· EDA<br>· Data Collection<br>· Preprocessing|· Elastic Search<br>· Text Style Transfer<br>· Data Collection|· Model Research<br>· FrontEnd<br>· Server Deploy|· DialogBERT<br>· Data Collection|
 <br>
 
-## File Structure
+## 🏢 File Structure
     ```
     .
     |-- README.md
@@ -231,7 +231,7 @@
     ```
 <br>
 
-## How to run
+## 📄 How to run
 ```
 git clone https://github.com/boostcampaitech3/final-project-level3-nlp-10.git
 pip install -r requirements.txt
@@ -245,7 +245,7 @@ docker run -p 8501:8501 weroda_app
 ```
 <br>
 
-## Dataset
+## 🗃 Dataset
 - [[KETI] 웰니스 대화 스크립트 데이터셋](https://aihub.or.kr/opendata/keti-data/recognition-laguage/KETI-02-006)
     - 정신 건강 상담 주제의 359개 대화 의도에 대한 5,232개의 사용자 발화 및 1,023개의 챗봇 발화
     - KoGPT2 모델 학습, Retrieval 데이터셋 구축에 사용
@@ -271,7 +271,7 @@ docker run -p 8501:8501 weroda_app
     ```
 <br>
 
-## KoGPT2 (Multi DownStream Task)
+##  KoGPT2 (Multi DownStream Task)
 
 <img src="https://user-images.githubusercontent.com/62659407/172771905-18629375-ff56-452b-8065-a762fc9a9a7d.png" width="60%">
 
@@ -332,12 +332,12 @@ docker run -p 8501:8501 weroda_app
 
 <br>
 
-## Service Architecture
+## 🎞 Service Architecture
 <img src="https://user-images.githubusercontent.com/62659407/172772270-fc8ed47a-18e9-49f2-a92d-d43e94935be9.png" width="60%">
         
 <br>
 
-## Result
+## 💎 Result
 - 시연 영상
 
     <img src="https://user-images.githubusercontent.com/62659407/172053397-11044ee5-d7a5-4b1d-adcb-aea95e954d38.gif" width="60%">
